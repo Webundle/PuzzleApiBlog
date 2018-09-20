@@ -55,7 +55,7 @@ class CategoryController extends BaseFOSRestController
 	/**
 	 * @FOS\RestBundle\Controller\Annotations\View()
 	 * @FOS\RestBundle\Controller\Annotations\Get("/categories/{id}")
-	 * @Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverte("category", class="PuzzleApiBlogBundle:Category")
+	 * @Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter("category", class="PuzzleApiBlogBundle:Category")
 	 */
 	public function getBlogCategoryAction(Request $request, Category $category) {
 	    if ($category->getCreatedBy()->getId() !== $this->getUser()->getId()) {
@@ -98,7 +98,7 @@ class CategoryController extends BaseFOSRestController
 	/**
 	 * @FOS\RestBundle\Controller\Annotations\View()
 	 * @FOS\RestBundle\Controller\Annotations\Put("/categories/{id}")
-	 * @Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverte("category", class="PuzzleApiBlogBundle:Category")
+	 * @Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter("category", class="PuzzleApiBlogBundle:Category")
 	 */
 	public function putBlogCategoryAction(Request $request, Category $category) {
 	    $user = $this->getUser();
@@ -136,7 +136,7 @@ class CategoryController extends BaseFOSRestController
 	/**
 	 * @FOS\RestBundle\Controller\Annotations\View()
 	 * @FOS\RestBundle\Controller\Annotations\Delete("/categories/{id}")
-	 * @Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverte("category", class="PuzzleApiBlogBundle:Category")
+	 * @Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter("category", class="PuzzleApiBlogBundle:Category")
 	 */
 	public function deleteBlogCategoryAction(Request $request, Category $category) {
 	    if ($category->getCreatedBy()->getId() !== $this->getUser()->getId()) {
