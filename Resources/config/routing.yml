@@ -1,0 +1,3 @@
+blog_category:
+    type: rest
+    resource: Puzzle\Api\BlogBundle\Controller\CategoryController
