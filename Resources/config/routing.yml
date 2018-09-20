@@ -1,3 +1,7 @@
 blog_category:
     type: rest
     resource: Puzzle\Api\BlogBundle\Controller\CategoryController
+    
+blog_article:
+    type: rest
+    resource: Puzzle\Api\BlogBundle\Controller\ArticleController
