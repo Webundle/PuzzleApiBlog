@@ -9,3 +9,7 @@ blog_article:
 blog_archive:
     type: rest
     resource: Puzzle\Api\BlogBundle\Controller\ArchiveController
+
+blog_comment:
+    type: rest
+    resource: Puzzle\Api\BlogBundle\Controller\CommentController
