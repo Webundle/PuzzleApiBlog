@@ -8,19 +8,7 @@ services:
         # this means you cannot fetch services directly from the container via $container->get()
         # if you need to do this, you can override this setting on individual services
         public: false
-        
-    # Default Services
-    Puzzle\Api\BlogBundle\:
-        resource: '../../../BlogBundle/*'
-        public: true
-        exclude: '../../../BlogBundle/{Entity,Repository,Tests,Form,Twig,Event,EventListener}'
-    
-    # Controller
-    Puzzle\Api\BlogBundle\Controller\:
-        resource: '../../../BlogBundle/Controller'
-        public: true
-        tags: ['controller.service_arguments']
-        
+     
     # Listener
     papis.event_listener.article:
         class:  Puzzle\Api\BlogBundle\Listener\ArticleListener
