@@ -30,11 +30,10 @@
 		"webundle/puzzle-api-user" : "^1.0"
 	},
 	"autoload" : {
-		"psr-0" : {
-			"Webundle\\Puzzle\\Api\\BlogBundle" : ""
+		"psr-4" : {
+			"Puzzle\\Api\\BlogBundle\\" : ""
 		}
 	},
-	"target-dir" : "Webundle/Puzzle/Api/BlogBundle",
 	"extra" : {
 		"branch-alias" : {
 			"dev-master" : "1.0-dev"
