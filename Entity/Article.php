@@ -35,21 +35,11 @@ use Knp\DoctrineBehaviors\Model\Blameable\Blameable;
  * ))
  * @Hateoas\Relation(
  *     name = "category",
- *     embedded = "expr(object.getCategory())",
- *     exclusion = @Hateoas\Exclusion(excludeIf = "expr(object.getCategory() === null)"),
- *     href = @Hateoas\Route(
- * 			"get_blog_category", 
- * 			parameters = {"id" = "expr(object.getCategory().getId())"},
- * 			absolute = true,
+ *     embedded = "expr(object.getCategory())"
  * ))
  * @Hateoas\Relation(
  *     name = "archive",
- *     embedded = "expr(object.getArchive())",
- *     exclusion = @Hateoas\Exclusion(excludeIf = "expr(object.getArchive() === null)"),
- *     href = @Hateoas\Route(
- * 			"get_blog_archive", 
- * 			parameters = {"id" = "expr(object.getArchive().getId())"},
- * 			absolute = true,
+ *     embedded = "expr(object.getArchive())"
  * ))
  * @Hateoas\Relation(
  *     name = "comments",

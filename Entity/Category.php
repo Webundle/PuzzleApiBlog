@@ -43,7 +43,7 @@ use Knp\DoctrineBehaviors\Model\Sluggable\Sluggable;
  *     exclusion = @Hateoas\Exclusion(excludeIf = "expr(object.getParent() === null)"),
  *     href = @Hateoas\Route(
  * 			"get_blog_category", 
- * 			parameters = {"filter" = "parent==expr(object.getParent().getId())"},
+ * 			parameters = {"id" = "expr(object.getParent().getId())"},
  * 			absolute = true,
  * ))
  * @Hateoas\Relation(
