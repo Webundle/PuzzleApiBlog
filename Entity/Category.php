@@ -97,10 +97,6 @@ class Category
         return [ 'name' ];
     }
     
-    public function generateSlugValue($values) {
-        return implode('-', $values);
-    }
-    
     public function setArticles(Collection $articles) :self {
         $this->articles = $articles;
         return $this;

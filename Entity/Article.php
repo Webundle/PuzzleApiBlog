@@ -133,11 +133,6 @@ class Article
         return [ 'name' ];
     }
     
-    public function generateSlugValue($values)
-    {
-        return implode('-', $values);
-    }
-    
     /**
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
