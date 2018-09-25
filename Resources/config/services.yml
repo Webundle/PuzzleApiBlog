@@ -1,4 +1,19 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+    # Service
+    Puzzle\Api\BlogBundle\:
+        resource: '%kernel.project_dir%/vendor/webundle/puzzle-api-blog/*'
+        exclude: '%kernel.project_dir%/vendor/webundle/puzzle-api-blog/{Entity,Repository,Tests}'
+    
+    # Controller
+    Puzzle\Api\BlogBundle\Controller\:
+        resource: '%kernel.project_dir%/vendor/webundle/puzzle-api-blog/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+        
     # Listener
     papis.event_listener.article:
         class:  Puzzle\Api\BlogBundle\Listener\ArticleListener
