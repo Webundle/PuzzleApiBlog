@@ -2,40 +2,22 @@
 
 namespace Puzzle\Api\BlogBundle\Controller;
 
-use JMS\Serializer\SerializerInterface;
 use Puzzle\Api\BlogBundle\Entity\Article;
 use Puzzle\Api\BlogBundle\Entity\Comment;
 use Puzzle\OAuthServerBundle\Controller\BaseFOSRestController;
-use Puzzle\OAuthServerBundle\Service\ErrorFactory;
-use Puzzle\OAuthServerBundle\Service\Repository;
 use Puzzle\OAuthServerBundle\Service\Utils;
 use Puzzle\OAuthServerBundle\Util\FormatUtil;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Article API
  * 
  * @author AGNES Gnagne Cedric <cecenho55@gmail.com>
+ * 
  */
 class CommentController extends BaseFOSRestController
 {
-    /**
-     * @param RegistryInterface         $doctrine
-     * @param Repository                $repository
-     * @param SerializerInterface       $serializer
-     * @param EventDispatcherInterface  $dispatcher
-     * @param ErrorFactory              $errorFactory
-     */
-    public function __construct(
-        RegistryInterface $doctrine,
-        Repository $repository,
-        SerializerInterface $serializer,
-        EventDispatcherInterface $dispatcher,
-        ErrorFactory $errorFactory
-    ){
-        parent::__construct($doctrine, $repository, $serializer, $dispatcher, $errorFactory);
+    public function __construct() {
+        parent::__construct();
         $this->fields = ['authorName', 'authorEmail', 'content', 'visible', 'article', 'parent'];
     }
     
@@ -44,10 +26,11 @@ class CommentController extends BaseFOSRestController
      * @FOS\RestBundle\Controller\Annotations\Get("/comments")
      */
     public function getBlogCommentsAction(Request $request) {
-        $query = $request->query;
+        $query = Utils::blameRequestQuery($request->query, $this->getUser());
         
-        $query = Utils::blameRequestQuery($query, $this->getUser());
-        $response = $this->repository->filter($query, Comment::class, $this->connection);
+        /** @var Puzzle\OAuthServerBundle\Service\Repository $repository */
+        $repository = $this->get('papis.repository');
+        $response = $repository->filter($query, Comment::class, $this->connection);
         
         return $this->handleView(FormatUtil::formatView($request, $response));
     }
@@ -58,11 +41,13 @@ class CommentController extends BaseFOSRestController
      * @Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter("comment", class="PuzzleApiBlogBundle:Comment")
      */
     public function getBlogCommentAction(Request $request, Comment $comment) {
-        if ($comment->getCreatedBy()->getId() !== $this->getUser()->getId()){
-            return $this->handleView($this->errorFactory->accessDenied($request));
+        if ($comment->getCreatedBy()->getId() !== $this->getUser()->getId()) {
+            /** @var Puzzle\OAuthServerBundle\Service\ErrorFactory $errorFactory */
+            $errorFactory = $this->get('papis.error_factory');
+            return $this->handleView($errorFactory->accessDenied($request));
         }
         
-        return $this->handleView(FormatUtil::formatView($request, ['resources' => $comment]));
+        return $this->handleView(FormatUtil::formatView($request, $comment));
     }
     
 	/**
@@ -71,19 +56,19 @@ class CommentController extends BaseFOSRestController
 	 */
 	public function postBlogCommentAction(Request $request) {
 	    /** @var Doctrine\ORM\EntityManager $em */
-	    $em = $this->doctrine->getManager($this->connection);
+	    $em = $this->get('doctrine')->getManager($this->connection);
 	    
 	    $data = $request->request->all();
 	    $data['article'] = $em->getRepository(Article::class)->find($data['article']);
+	    $data['parent'] = isset($data['parent']) && $data['parent'] ? $em->getRepository(Comment::class)->find($data['parent']) : null;
 	    
-	    /** @var Comment $comment */
+	    /** @var Puzzle\Api\BlogBundle\Entity\Comment $comment */
 	    $comment = Utils::setter(new Comment(), $this->fields, $data);
 	    
-	    $em = $this->doctrine->getManager($this->connection);
 	    $em->persist($comment);
 	    $em->flush();
 	    
-	    return $this->handleView(FormatUtil::formatView($request, ['resources' => $comment]));
+	    return $this->handleView(FormatUtil::formatView($request, $comment));
 	}
 	
 	/**
@@ -93,18 +78,18 @@ class CommentController extends BaseFOSRestController
 	 */
 	public function putBlogCommentAction(Request $request, Comment $comment) {
 	    if ($comment->getCreatedBy()->getId() !== $this->getUser()->getId()) {
-	        return $this->handleView($this->errorFactory->badRequest($request));
+	        /** @var Puzzle\OAuthServerBundle\Service\ErrorFactory $errorFactory */
+	        $errorFactory = $this->get('papis.error_factory');
+	        return $this->handleView($errorFactory->badRequest($request));
 	    }
 	    
-	    $data = $request->request->all();
-	    
 	    /** @var Comment $comment */
-	    $comment = Utils::setter($comment, $this->fields, $data);
+	    $comment = Utils::setter($comment, $this->fields, $request->request->all());
 	    
 	    $em = $this->doctrine->getManager($this->connection);
 	    $em->flush();
 	    
-	    return $this->handleView(FormatUtil::formatView($request, ['code' => 200]));
+	    return $this->handleView(FormatUtil::formatView($request, $comment));
 	}
 	
 	
@@ -115,13 +100,15 @@ class CommentController extends BaseFOSRestController
 	 */
 	public function deleteBlogCommentAction(Request $request, Comment $comment) {
 	    if ($comment->getCreatedBy()->getId() !== $this->getUser()->getId()) {
-	        return $this->handleView($this->errorFactory->badRequest($request));
+	        /** @var Puzzle\OAuthServerBundle\Service\ErrorFactory $errorFactory */
+	        $errorFactory = $this->get('papis.error_factory');
+	        return $this->handleView($errorFactory->badRequest($request));
 	    }
 	    
-	    $em = $this->doctrine->getManager($this->connection);
+	    $em = $this->get('doctrine')->getManager($this->connection);
 	    $em->remove($comment);
 	    $em->flush();
 	    
-	    return $this->handleView(FormatUtil::formatView($request, ['code' => 200]));
+	    return $this->handleView(FormatUtil::formatView($request, null, 204));
 	}
 }

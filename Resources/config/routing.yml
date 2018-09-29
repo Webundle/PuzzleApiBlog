@@ -13,7 +13,3 @@ blog_archive:
 blog_comment:
     type: rest
     resource: Puzzle\Api\BlogBundle\Controller\CommentController
-
-blog_flash:
-    type: rest
-    resource: Puzzle\Api\BlogBundle\Controller\FlashController

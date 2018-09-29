@@ -63,14 +63,6 @@ class Article
         Taggable;
     
     /**
-     * @ORM\Column(name="short_description", type="string", length=255, nullable=true)
-     * @var string
-     * @JMS\Expose
-     * @JMS\Type("string")
-     */
-    private $shortDescription;
-    
-    /**
      * @ORM\Column(name="slug", type="string", length=255)
      * @var string
      * @JMS\Expose
@@ -93,6 +85,22 @@ class Article
      * @JMS\Type("boolean")
      */
     private $visible;
+    
+    /**
+     * @ORM\Column(name="flash_expires_at", type="datetime", nullable=true)
+     * @var \DateTime
+     * @JMS\Expose
+     * @JMS\Type("DateTime<'Y-m-d'>")
+     */
+    private $flashExpiresAt;
+    
+    /**
+     * @ORM\Column(name="flash", type="boolean")
+     * @var boolean
+     * @JMS\Expose
+     * @JMS\Type("boolean")
+     */
+    private $flash;
     
     /**
      * @ORM\Column(name="author", type="string")
@@ -126,25 +134,11 @@ class Article
     	$this->comments = new \Doctrine\Common\Collections\ArrayCollection();
     	$this->visible = true;
     	$this->enableComments = false;
+    	$this->flash = false;
     }
     
-    public function getSluggableFields()
-    {
+    public function getSluggableFields() {
         return [ 'name' ];
-    }
-    
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
-    public function setShortDescription(){
-        $this->shortDescription = strlen($this->description) > 100 ? 
-                                  mb_strimwidth($this->description, 0, 100, '...') : $this->description;
-        return $this;
-    }
-
-    public function getShortDescription() :?string {
-        return $this->shortDescription;
     }
 
     public function setEnableComments($enableComments) :self {
@@ -163,6 +157,24 @@ class Article
     
     public function isVisible() :?bool {
         return $this->visible;
+    }
+
+    public function setFlash(bool $flash) :self {
+        $this->flash = $flash;
+        return $this;
+    }
+    
+    public function isFlash() :?bool {
+        return $this->flash;
+    }
+    
+    public function setFlashExpiresAt(\DateTime $flashExpiresAt = null) : self {
+        $this->flashExpiresAt = $flashExpiresAt;
+        return $this;
+    }
+    
+    public function getFlashExpiresAt() :? \DateTime {
+        return $this->flashExpiresAt;
     }
     
     public function setAuthor($author) {

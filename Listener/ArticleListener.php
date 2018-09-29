@@ -55,7 +55,7 @@ class ArticleListener
 	 * 
 	 * @param ArticleEvent $event
 	 */
-	public function onDeleteAction(ArticleEvent $event) {
+	public function onDeleteArticle(ArticleEvent $event) {
 	    $article = $event->getArticle();
 	    $archive = $article->getArchive();
 	    

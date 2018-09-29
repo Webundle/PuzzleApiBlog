@@ -2,15 +2,10 @@
 
 namespace Puzzle\Api\BlogBundle\Controller;
 
-use JMS\Serializer\SerializerInterface;
 use Puzzle\Api\BlogBundle\Entity\Archive;
 use Puzzle\OAuthServerBundle\Controller\BaseFOSRestController;
-use Puzzle\OAuthServerBundle\Service\ErrorFactory;
-use Puzzle\OAuthServerBundle\Service\Repository;
 use Puzzle\OAuthServerBundle\Service\Utils;
 use Puzzle\OAuthServerBundle\Util\FormatUtil;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -20,21 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ArchiveController extends BaseFOSRestController
 {
-    /**
-     * @param RegistryInterface         $doctrine
-     * @param Repository                $repository
-     * @param SerializerInterface       $serializer
-     * @param EventDispatcherInterface  $dispatcher
-     * @param ErrorFactory              $errorFactory
-     */
-    public function __construct(
-        RegistryInterface $doctrine,
-        Repository $repository,
-        SerializerInterface $serializer,
-        EventDispatcherInterface $dispatcher,
-        ErrorFactory $errorFactory
-    ){
-        parent::__construct($doctrine, $repository, $serializer, $dispatcher, $errorFactory);
+    public function __construct(){
+        parent::__construct();
     }
     
 	/**
@@ -43,7 +25,10 @@ class ArchiveController extends BaseFOSRestController
 	 */
 	public function getBlogArchivesAction(Request $request) {
 	    $query = Utils::blameRequestQuery($request->query, $this->getUser());
-	    $response = $this->repository->filter($query, Archive::class, $this->connection);
+	    
+	    /** @var Puzzle\OAuthServerBundle\Service\Repository $repository */
+	    $repository = $this->get('papis.repository');
+	    $response = $repository->filter($query, Archive::class, $this->connection);
 	    
 	    return $this->handleView(FormatUtil::formatView($request, $response));
 	}
@@ -55,7 +40,9 @@ class ArchiveController extends BaseFOSRestController
 	 */
 	public function getBlogArchiveAction(Request $request, Archive $archive) {
 	    if ($archive->getCreatedBy()->getId() !== $this->getUser()->getId()) {
-	        return $this->handleView($this->errorFactory->accessDenied($request));
+	        /** @var Puzzle\OAuthServerBundle\Service\Repository $errorFactory */
+	        $errorFactory = $this->get('papis.error_factory');
+	        return $this->handleView($errorFactory->accessDenied($request));
 	    }
 	    
 	    return $this->handleView(FormatUtil::formatView($request, ['resources' => $archive]));
